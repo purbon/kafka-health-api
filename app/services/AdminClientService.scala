@@ -5,13 +5,8 @@ import models.Configuration
 import org.apache.kafka.clients.admin.AdminClient
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable._
 
-class AdminClientService @Inject() (config: Configuration) {
-
-  val adminConf: Map[String, AnyRef] = HashMap("bootstrap.servers" -> config.servers.mkString(","))
-
-  val adminClient = AdminClient.create(adminConf.asJava)
+class AdminClientService @Inject() (adminClient: AdminClient) {
 
   def isr(): Boolean = {
 
