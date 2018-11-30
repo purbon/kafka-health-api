@@ -15,7 +15,7 @@ to join forces.
 This is how it looks for now the very minimum API, you can expect this to be improving and moving 
 as we develop this project.
 
-![alt text](img/KAFKA-health-api-green.png "KAFKA health api when green")
+<img src="https://raw.githubusercontent.com/purbon/kafka-health-api/master/img/KAFKA-health-api-green.png" align="center" height="300" width="480"/>
 
 ![alt text](img/KAFKA-health-api-red.png "KAFKA health api when red")
 
