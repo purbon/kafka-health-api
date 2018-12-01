@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 
-import models.{Health, KafkaBrokerConfigDesc, KafkaConfigDescription, KafkaStatus}
+import models.{Health, KafkaConfigDescription, KafkaStatus}
 import play.api.Configuration
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
