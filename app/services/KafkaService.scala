@@ -1,32 +1,52 @@
 package services
 
 import java.net.Socket
-
 import javax.inject.Inject
-import models.{Color, Configuration, KafkaStatus, KafkaStatusErrors}
+
+import models._
 
 
-class KafkaService  @Inject() (config: Configuration,
+class KafkaService  @Inject() (appConfig: Configuration,
                                adminClientService: AdminClientService) {
 
 
   def status(): KafkaStatus = {
 
-    val aliveServers:Int = alive(config.servers)
+    val aliveServers:Int = alive(appConfig.servers)
+    val numberOfServers:Int = appConfig.servers.size
 
-    if (aliveServers == config.servers.size) {
+    if (aliveServers == numberOfServers) {
       if (adminClientService.isr()) {
         KafkaStatus(Color.Green, Set.empty)
       } else {
         KafkaStatus(Color.Orange, Set(KafkaStatusErrors.isrError))
       }
     }
-    else if (aliveServers > config.servers.size*0.5) {
+    else if (aliveServers > numberOfServers*0.5) {
       KafkaStatus(Color.Orange, Set(KafkaStatusErrors.SomeKafkaBrokersAreUnreachable))
     }
     else {
       KafkaStatus(Color.Red, Set(KafkaStatusErrors.LessThanXBrokersAreUnreachable))
     }
+  }
+
+  def clusterConfig(): KafkaConfigDescription = {
+
+    val kafkaConfig: List[KafkaBrokerConfigDesc]= adminClientService
+      .clusterConfig()
+      .map {
+        case (brokerId, configList) => {
+          KafkaBrokerConfigDesc(
+            brokerId = brokerId,
+            config = configList
+              .map { entry =>
+                KafkaConfigEntry(name = entry.name(), value = entry.value())
+              }
+          )
+        }
+      }.toList
+
+    KafkaConfigDescription(kafkaConfig)
   }
 
   private def ping(host: String, port:String): Unit = {

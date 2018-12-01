@@ -11,3 +11,7 @@ class Configuration  @Inject() (config: play.api.Configuration) {
     .map(_.unwrapped().toString)
 
 }
+
+case class KafkaBrokerConfigDesc(brokerId: String, config: List[KafkaConfigEntry])
+case class KafkaConfigDescription(entries: List[KafkaBrokerConfigDesc])
+case class KafkaConfigEntry(name: String, value: String)
