@@ -42,7 +42,7 @@ class StatusControllerSpec extends PlaySpec with GuiceOneAppPerTest
 
     "render the health page with the current status" in {
       val controller = inject[StatusController]
-      val health = controller.health().apply(FakeRequest(GET, "/status/health"))
+      val health = controller.health().apply(FakeRequest(GET, "/"))
 
       status(health) mustBe OK
 

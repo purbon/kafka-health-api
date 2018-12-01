@@ -20,6 +20,7 @@ class StatusController @Inject()(cc: ControllerComponents,
     )(unlift(KafkaStatus.unapply))
 
   implicit val healthWrites: Writes[Health] = (
+    (JsPath \ "hello").write[String] and
     (JsPath \ "status").write[KafkaStatus] and
       (JsPath \ "time").write[Long]
     )(unlift(Health.unapply))
@@ -28,6 +29,7 @@ class StatusController @Inject()(cc: ControllerComponents,
   def health() = Action {
 
     val health = Health(
+                      hello = "Welcome to the Kafka Health API",
                       status = kafkaService.status(),
                       time = System.currentTimeMillis())
     Ok(Json.toJson(health))

@@ -1,14 +1,11 @@
 package services
 
-import java.util.Collections
 import javax.inject.Inject
 
-import models.Configuration
 import org.apache.kafka.clients.admin.{AdminClient, ConfigEntry}
-import org.apache.kafka.common.config.{ConfigResource, TopicConfig}
+import org.apache.kafka.common.config.ConfigResource
 
 import scala.collection.JavaConverters._
-import scala.collection.{immutable, mutable}
 
 class AdminClientService @Inject() (adminClient: AdminClient) {
 

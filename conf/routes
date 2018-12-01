@@ -4,9 +4,8 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
 
-GET     /status/health              controllers.StatusController.health
+GET     /                          controllers.StatusController.health
 
 GET     /config/brokers            controllers.DescribeController.kafkaBrokerConfig
 
