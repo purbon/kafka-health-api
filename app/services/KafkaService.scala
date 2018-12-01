@@ -49,6 +49,25 @@ class KafkaService  @Inject() (appConfig: Configuration,
     KafkaConfigDescription(kafkaConfig)
   }
 
+  def clusterProtocolVersions(): KafkaConfigDescription = {
+
+    val kafkaConfig: List[KafkaBrokerConfigDesc]= adminClientService
+      .clusterConfig(Some(List("log.message.format.version")))
+      .map {
+        case (brokerId, configList) => {
+          KafkaBrokerConfigDesc(
+            brokerId = brokerId,
+            config = configList
+              .map { entry =>
+                KafkaConfigEntry(name = entry.name(), value = entry.value())
+              }
+          )
+        }
+      }.toList
+
+    KafkaConfigDescription(kafkaConfig)
+  }
+
   private def ping(host: String, port:String): Unit = {
     val socket = new Socket(host, port.toInt)
 

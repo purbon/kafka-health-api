@@ -34,7 +34,7 @@ class AdminClientService @Inject() (adminClient: AdminClient) {
   }
 
 
-  def clusterConfig(): Map[String, List[ConfigEntry]] = {
+  def clusterConfig(filters : Option[List[String]] = None): Map[String, List[ConfigEntry]] = {
 
     val configResources = adminClient
       .describeCluster()
@@ -43,14 +43,15 @@ class AdminClientService @Inject() (adminClient: AdminClient) {
       .map( node => new ConfigResource(ConfigResource.Type.BROKER, node.idString()))
       .toList
 
-    listConfigValues(configResources)
+    listConfigValues(configResources, filters)
   }
 
   def close(): Unit = {
     adminClient.close()
   }
 
-  private def listConfigValues(resources: List[ConfigResource]) = {
+  private def listConfigValues(resources: List[ConfigResource],
+                               filters: Option[List[String]] = None): Map[String, List[ConfigEntry]] = {
 
     adminClient
       .describeConfigs(resources.asJavaCollection)
@@ -63,6 +64,7 @@ class AdminClientService @Inject() (adminClient: AdminClient) {
               .entries()
               .asScala
               .toList
+              .filterNot( p => filters.exists( list => !list.contains(p.name()) ))
           )
         }
       }.toMap

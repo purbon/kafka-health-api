@@ -14,4 +14,4 @@ object KafkaStatusErrors {
 
 }
 case class KafkaStatus(semaphore: String, errors: Set[String])
-case class Health(hello: String, status: KafkaStatus, time: Long)
+case class Health(hello: String, versions: KafkaConfigDescription, status: KafkaStatus, time: Long)
