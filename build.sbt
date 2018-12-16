@@ -15,7 +15,11 @@ libraryDependencies += "org.apache.kafka" % "kafka-tools" % "2.1.0" % Test
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.1.0" % Test
 libraryDependencies += "com.salesforce.kafka.test" % "kafka-junit-core" % "3.0.1" % Test
 
-javaOptions in Test += "-Dconfig.file=conf/test.conf"
+val jmxOptsPort = 9999
+val jmxDefaultOpts = "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false"
+val jmxOpts = s"""$jmxDefaultOpts -Dcom.sun.management.jmxremote.port=$jmxOptsPort """
+
+javaOptions in Test += s"-Dconfig.file=conf/test.conf $jmxOpts"
 
 
 // Adds additional packages into Twirl
