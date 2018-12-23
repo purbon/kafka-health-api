@@ -7,9 +7,13 @@ import models._
 
 
 class KafkaService  @Inject() (appConfig: Configuration,
-                               adminClientService: AdminClientService) {
+                               adminClientService: AdminClientService,
+                               metricService: MetricService) {
 
-
+  /**
+    * Check the Kafka status
+    * @return KafkaStatus with the color status and a simple error description
+    */
   def status(): KafkaStatus = {
 
     val aliveServers:Int = alive(appConfig.servers)
@@ -28,6 +32,10 @@ class KafkaService  @Inject() (appConfig: Configuration,
     else {
       KafkaStatus(Color.Red, Set(KafkaStatusErrors.LessThanXBrokersAreUnreachable))
     }
+  }
+
+  def iamUsingFullGuaranties(): Boolean = {
+    metricService.isAckAll()
   }
 
   def clusterConfig(): KafkaConfigDescription = {

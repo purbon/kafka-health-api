@@ -1,8 +1,7 @@
 package controllers
 
 import javax.inject._
-
-import models.{Health, KafkaConfigDescription, KafkaStatus}
+import models.{Guaranties, Health, KafkaConfigDescription, KafkaStatus}
 import play.api.Configuration
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -28,6 +27,13 @@ class StatusController @Inject()(cc: ControllerComponents,
       (JsPath \ "time").write[Long]
     )(unlift(Health.unapply))
 
+
+  implicit val guarantiesWrites: Writes[Guaranties] = (
+    (JsPath \ "producer").write[String] and
+      (JsPath \ "broker").write[String]
+    )(unlift(Guaranties.unapply))
+
+
   def health() = Action {
 
     val health = Health(
@@ -36,5 +42,12 @@ class StatusController @Inject()(cc: ControllerComponents,
                       status = kafkaService.status(),
                       time = System.currentTimeMillis())
     Ok(Json.toJson(health))
+  }
+
+  def clusterGuaranties() = Action {
+
+    val producerGuaranties = kafkaService.iamUsingFullGuaranties()
+    val guaranties = Guaranties( producer = s"$producerGuaranties", broker = "Pending")
+    Ok(Json.toJson(guaranties))
   }
 }

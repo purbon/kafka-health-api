@@ -1,6 +1,8 @@
 package models
 
-import javax.management.{MBeanServerConnection, ObjectName}
+import java.util
+
+import javax.management.{MBeanServerConnection, ObjectInstance, ObjectName}
 import javax.management.remote.{JMXConnector, JMXConnectorFactory, JMXServiceURL}
 
 import scala.collection.JavaConverters._
@@ -22,6 +24,11 @@ object JMXClient {
 class JMXClient(jMXConnector: JMXConnector) {
 
   private val mbsc: MBeanServerConnection = jMXConnector.getMBeanServerConnection
+
+  val instances: util.Set[ObjectInstance] = mbsc.queryMBeans(null, null)
+
+  instances.asScala.foreach( i => println(i.getObjectName) )
+
 
   def checkBean(metricBean: String): Seq[JMXAttribute] = {
     val objectName: ObjectName = new ObjectName(metricBean)
