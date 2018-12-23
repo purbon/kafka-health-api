@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject._
-import models.{Guaranties, Health, KafkaConfigDescription, KafkaStatus}
+import models._
 import play.api.Configuration
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -27,10 +27,22 @@ class StatusController @Inject()(cc: ControllerComponents,
       (JsPath \ "time").write[Long]
     )(unlift(Health.unapply))
 
+  implicit val replicaStatusWrites: Writes[ReplicaStatus] = (
+    (JsPath \ "partitionName").write[String] and
+      (JsPath \ "isrList").write[List[String]] and
+      (JsPath \ "replicaList").write[List[String]] and
+      (JsPath \ "inSync").write[Boolean]
+    )(unlift(ReplicaStatus.unapply))
+
+  implicit val brokerStatusWrites: Writes[BrokerStatus] = (
+    (JsPath \ "allInSyncReplicas").write[Boolean] and
+      (JsPath \ "replicaList").write[List[ReplicaStatus]]
+    )(unlift(BrokerStatus.unapply))
+
 
   implicit val guarantiesWrites: Writes[Guaranties] = (
     (JsPath \ "producer").write[String] and
-      (JsPath \ "broker").write[String]
+      (JsPath \ "broker").write[BrokerStatus]
     )(unlift(Guaranties.unapply))
 
 
@@ -47,7 +59,14 @@ class StatusController @Inject()(cc: ControllerComponents,
   def clusterGuaranties() = Action {
 
     val producerGuaranties = kafkaService.iamUsingFullGuaranties()
-    val guaranties = Guaranties( producer = s"$producerGuaranties", broker = "Pending")
+
+    val guaranties = Guaranties( producer = s"$producerGuaranties",
+                                 broker = BrokerStatus(
+                                   kafkaService.allInSyncReplicas(),
+                                   kafkaService.replicaList()
+                                 )
+    )
     Ok(Json.toJson(guaranties))
   }
+
 }

@@ -27,9 +27,6 @@ class JMXClient(jMXConnector: JMXConnector) {
 
   val instances: util.Set[ObjectInstance] = mbsc.queryMBeans(null, null)
 
-  instances.asScala.foreach( i => println(i.getObjectName) )
-
-
   def checkBean(metricBean: String): Seq[JMXAttribute] = {
     val objectName: ObjectName = new ObjectName(metricBean)
     val attributeNames: Array[String] = mbsc.getMBeanInfo(objectName).getAttributes.map(_.getName)
