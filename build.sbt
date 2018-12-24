@@ -10,7 +10,10 @@ scalaVersion := "2.12.6"
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
-libraryDependencies += "org.apache.kafka" %% "kafka" % "2.1.0"
+libraryDependencies += {
+  sys.props += "packaging.type" -> "jar"
+  "org.apache.kafka" %% "kafka" % "2.1.0"
+}
 libraryDependencies += "org.apache.kafka" % "kafka-tools" % "2.1.0" % Test
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.1.0" % Test
 libraryDependencies += "com.salesforce.kafka.test" % "kafka-junit-core" % "3.0.1" % Test
