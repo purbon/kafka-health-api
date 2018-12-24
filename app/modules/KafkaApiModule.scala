@@ -19,10 +19,10 @@ class KafkaApiModule(env: Environment,
 
     bind(classOf[AdminClient]).toInstance(adminClient)
 
-    val jmxPort   = config.get[Int]("jmx.port")
-    val jmxClient = JMXClient.build(jmxPort)
-
+    val jmxPort = config.get[Int]("jmx.port")
+    val jmxClient = JMXClient(jmxPort)
     bind(classOf[JMXClient]).toInstance(jmxClient)
+
   }
 
   private def servers = {

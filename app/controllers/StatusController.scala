@@ -8,6 +8,8 @@ import play.api.libs.json._
 import play.api.mvc._
 import services.KafkaService
 
+import scala.util.{Failure, Try}
+
 
 @Singleton
 class StatusController @Inject()(cc: ControllerComponents,
@@ -58,14 +60,18 @@ class StatusController @Inject()(cc: ControllerComponents,
 
   def clusterGuaranties() = Action {
 
-    val producerGuaranties = kafkaService.iamUsingFullGuaranties()
+    val producerGuaranties = Try({
+      kafkaService.iamUsingFullGuaranties()
+    }).recoverWith({
+      case (ex) => println(ex); Failure(ex);
+    }).getOrElse("JMX not reachable")
 
-    val guaranties = Guaranties( producer = s"$producerGuaranties",
-                                 broker = BrokerStatus(
-                                   kafkaService.allInSyncReplicas(),
-                                   kafkaService.replicaList()
-                                 )
-    )
+    val guaranties = Guaranties(producer = s"$producerGuaranties",
+         broker = BrokerStatus(
+           kafkaService.allInSyncReplicas(),
+           kafkaService.replicaList()
+         )
+       )
     Ok(Json.toJson(guaranties))
   }
 
