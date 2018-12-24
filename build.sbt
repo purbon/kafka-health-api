@@ -3,6 +3,11 @@ organization := "com.example"
 
 version := "1.0-SNAPSHOT"
 
+val workaround = {
+  sys.props += "packaging.type" -> "jar"
+  ()
+}
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.6"
