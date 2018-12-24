@@ -1,13 +1,14 @@
 package controllers
 
 import javax.inject._
-
-import models.{Health, KafkaConfigDescription, KafkaStatus}
+import models._
 import play.api.Configuration
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
 import services.KafkaService
+
+import scala.util.{Failure, Try}
 
 
 @Singleton
@@ -28,6 +29,25 @@ class StatusController @Inject()(cc: ControllerComponents,
       (JsPath \ "time").write[Long]
     )(unlift(Health.unapply))
 
+  implicit val replicaStatusWrites: Writes[ReplicaStatus] = (
+    (JsPath \ "partitionName").write[String] and
+      (JsPath \ "isrList").write[List[String]] and
+      (JsPath \ "replicaList").write[List[String]] and
+      (JsPath \ "inSync").write[Boolean]
+    )(unlift(ReplicaStatus.unapply))
+
+  implicit val brokerStatusWrites: Writes[BrokerStatus] = (
+    (JsPath \ "allInSyncReplicas").write[Boolean] and
+      (JsPath \ "replicaList").write[List[ReplicaStatus]]
+    )(unlift(BrokerStatus.unapply))
+
+
+  implicit val guarantiesWrites: Writes[Guaranties] = (
+    (JsPath \ "producer").write[String] and
+      (JsPath \ "broker").write[BrokerStatus]
+    )(unlift(Guaranties.unapply))
+
+
   def health() = Action {
 
     val health = Health(
@@ -37,4 +57,22 @@ class StatusController @Inject()(cc: ControllerComponents,
                       time = System.currentTimeMillis())
     Ok(Json.toJson(health))
   }
+
+  def clusterGuaranties() = Action {
+
+    val producerGuaranties = Try({
+      kafkaService.iamUsingFullGuaranties()
+    }).recoverWith({
+      case (ex) => println(ex); Failure(ex);
+    }).getOrElse("JMX not reachable")
+
+    val guaranties = Guaranties(producer = s"$producerGuaranties",
+         broker = BrokerStatus(
+           kafkaService.allInSyncReplicas(),
+           kafkaService.replicaList()
+         )
+       )
+    Ok(Json.toJson(guaranties))
+  }
+
 }

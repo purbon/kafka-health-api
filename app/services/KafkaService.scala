@@ -1,15 +1,21 @@
 package services
 
 import java.net.Socket
-import javax.inject.Inject
 
+import javax.inject.Inject
 import models._
+import org.apache.kafka.common.config.ConfigResource
 
 
 class KafkaService  @Inject() (appConfig: Configuration,
-                               adminClientService: AdminClientService) {
+                               adminClientService: AdminClientService,
+                               metricService: MetricService) {
 
-
+  /**
+    * Check the Kafka status
+    *
+    * @return KafkaStatus with the color status and a simple error description
+    */
   def status(): KafkaStatus = {
 
     val aliveServers:Int = alive(appConfig.servers)
@@ -28,6 +34,18 @@ class KafkaService  @Inject() (appConfig: Configuration,
     else {
       KafkaStatus(Color.Red, Set(KafkaStatusErrors.LessThanXBrokersAreUnreachable))
     }
+  }
+
+  def allInSyncReplicas(): Boolean = {
+    adminClientService.isr()
+  }
+
+  def replicaList(): List[ReplicaStatus] = {
+    adminClientService.replicaLists()
+  }
+
+  def iamUsingFullGuaranties(): Boolean = {
+    metricService.isAckAll()
   }
 
   def clusterConfig(): KafkaConfigDescription = {
@@ -52,7 +70,7 @@ class KafkaService  @Inject() (appConfig: Configuration,
   def clusterProtocolVersions(): KafkaConfigDescription = {
 
     val kafkaConfig: List[KafkaBrokerConfigDesc]= adminClientService
-      .clusterConfig(Some(List("log.message.format.version")))
+      .clusterConfig(ConfigResource.Type.BROKER, Some(List("log.message.format.version")))
       .map {
         case (brokerId, configList) => {
           KafkaBrokerConfigDesc(

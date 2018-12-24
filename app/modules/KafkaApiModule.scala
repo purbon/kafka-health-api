@@ -2,6 +2,7 @@ package modules
 
 import com.google.inject.AbstractModule
 import com.typesafe.config.ConfigList
+import models.JMXClient
 import org.apache.kafka.clients.admin.AdminClient
 import play.api.{Configuration, Environment}
 
@@ -17,6 +18,10 @@ class KafkaApiModule(env: Environment,
     val adminClient: AdminClient = AdminClient.create(adminConf.asJava)
 
     bind(classOf[AdminClient]).toInstance(adminClient)
+
+    val jmxPort = config.get[Int]("jmx.port")
+    val jmxClient = JMXClient(jmxPort)
+    bind(classOf[JMXClient]).toInstance(jmxClient)
 
   }
 
