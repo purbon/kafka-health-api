@@ -3,6 +3,8 @@
 
 [![Build Status](https://travis-ci.org/purbon/kafka-health-api.svg?branch=master)](https://travis-ci.org/purbon/kafka-health-api)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/55e33f3a9b4c061a260e/maintainability)](https://codeclimate.com/github/purbon/kafka-health-api/maintainability)
+
 work in progress Apache Kafka Health API based on an small play framework app.
 
 Note: *This project is currently work in progress*, not at all useful and will for 
@@ -24,4 +26,4 @@ complaints, etc!
 Programming is not a required skill, and there are many ways to help out!
 It is more important to us that you are able to contribute.
 
-That said, some basic guidelines, which you are free to ignore :)
+That said, [some basic guidelines](CONTRIBUTING.md), which you are free to ignore :)
