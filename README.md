@@ -17,3 +17,11 @@ The API is still evolving, but as of now you can get a first impression of the a
 
 ## Contributing
 
+
+All contributions are welcome: ideas, patches, documentation, bug reports,
+complaints, etc!
+
+Programming is not a required skill, and there are many ways to help out!
+It is more important to us that you are able to contribute.
+
+That said, some basic guidelines, which you are free to ignore :)
