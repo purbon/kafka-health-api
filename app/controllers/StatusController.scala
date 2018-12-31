@@ -1,5 +1,6 @@
 package controllers
 
+import io.swagger.annotations.{Api, ApiResponse, ApiResponses}
 import javax.inject._
 import models._
 import play.api.Configuration
@@ -9,7 +10,6 @@ import play.api.mvc._
 import services.KafkaService
 
 import scala.util.{Failure, Try}
-
 
 @Singleton
 class StatusController @Inject()(cc: ControllerComponents,
@@ -48,6 +48,9 @@ class StatusController @Inject()(cc: ControllerComponents,
     )(unlift(Guaranties.unapply))
 
 
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Health checked successfully")
+  ))
   def health() = Action {
 
     val health = Health(
@@ -58,6 +61,9 @@ class StatusController @Inject()(cc: ControllerComponents,
     Ok(Json.toJson(health))
   }
 
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Cluster guaranties successfully")
+  ))
   def clusterGuaranties() = Action {
 
     val producerGuaranties = Try({

@@ -11,5 +11,7 @@ GET     /config/brokers            controllers.DescribeController.kafkaBrokerCon
 
 GET     /cluster/guaranties        controllers.StatusController.clusterGuaranties
 
+GET     /swagger.json              controllers.ApiHelpController.getResources
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

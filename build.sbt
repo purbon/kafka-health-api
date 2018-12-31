@@ -14,14 +14,17 @@ scalaVersion := "2.12.6"
 libraryDependencies += "javax.ws.rs" % "javax.ws.rs-api" % "2.1" artifacts( Artifact("javax.ws.rs-api", "jar", "jar"))
 
 libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
-libraryDependencies += {
-  "org.apache.kafka" %% "kafka" % "2.1.0"
-}
+libraryDependencies ++= Seq(
+  "org.apache.kafka" %% "kafka" % "2.1.0",
+  "io.swagger" %% "swagger-play2" % "1.6.1"
+)
+
 libraryDependencies += "org.apache.kafka" % "kafka-tools" % "2.1.0" % Test
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.1.0" % Test
 libraryDependencies += "com.salesforce.kafka.test" % "kafka-junit-core" % "3.0.1" % Test
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
+
 
 javaOptions in Test += "-Dconfig.file=conf/test.conf"
 javaOptions in Test += "-Dcom.sun.management.jmxremote"
