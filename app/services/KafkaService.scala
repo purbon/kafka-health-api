@@ -53,7 +53,8 @@ class KafkaService  @Inject() (appConfig: Configuration,
   }
 
   def clusterProtocolVersions(): KafkaConfigDescription = {
-    getClusterConfigValues(filters = Some(List("log.message.format.version")))
+    getClusterConfigValues(filters = Some(List("log.message.format.version",
+      "inter.broker.protocol.version")))
   }
 
   private def getClusterConfigValues(configType: ConfigResource.Type = ConfigResource.Type.BROKER, filters : Option[List[String]] = None): KafkaConfigDescription = {
