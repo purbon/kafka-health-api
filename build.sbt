@@ -23,15 +23,14 @@ libraryDependencies += "org.apache.kafka" % "kafka-tools" % "2.1.0" % Test
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.1.0" % Test
 libraryDependencies += "com.salesforce.kafka.test" % "kafka-junit-core" % "3.0.1" % Test
 
-
-/*val jmxOptsPort = 9999
-val jmxDefaultOpts = "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false"
-val jmxOpts = s"""$jmxDefaultOpts -Dcom.sun.management.jmxremote.port=$jmxOptsPort """
-
-javaOptions in Test += s"-Dconfig.file=conf/test.conf $jmxOpts"
-*/
-
 javaOptions in Test += "-Dconfig.file=conf/test.conf"
+javaOptions in Test += "-Dcom.sun.management.jmxremote"
+javaOptions in Test += "-Dcom.sun.management.jmxremote.port=5678"
+javaOptions in Test += "-Dcom.sun.management.jmxremote.rmi.port=5678"
+javaOptions in Test += "-Dcom.sun.management.jmxremote.local.only=false "
+javaOptions in Test += "-Dcom.sun.management.jmxremote.ssl=false"
+javaOptions in Test += "-Dcom.sun.management.jmxremote.authenticate=false"
+javaOptions in Test += "-Djava.rmi.server.hostname=0.0.0.0"
 
 
 // Adds additional packages into Twirl

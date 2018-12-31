@@ -24,6 +24,7 @@ object JMXClient {
 
 class JMXClient(url: JMXServiceURL) {
 
+  def this() = this(null)
 
   def checkBean(metricBean: String): Seq[JMXAttribute] = {
 
