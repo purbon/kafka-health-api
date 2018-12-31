@@ -45,7 +45,7 @@ abstract class KafkaPlaySpec extends PlaySpec
   }
 
   implicit override def newAppForTest(testData: TestData): Application = {
-    val serversList: String = "localhost:9092"  // kafkaTestCluster.getKafkaConnectString
+    val serversList: String = kafkaTestCluster.getKafkaConnectString
 
     val utils = new KafkaTestUtils(kafkaTestCluster)
     kafkaTestCluster.getKafkaBrokers.asList().asScala.foreach { broker =>

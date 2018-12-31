@@ -1,42 +1,12 @@
 package controllers
 
-import com.salesforce.kafka.test.{KafkaTestCluster, KafkaTestUtils}
-import org.apache.kafka.clients.admin.AdminClient
-import org.scalatest.{BeforeAndAfterAll, TestData}
-import org.scalatestplus.play._
-import org.scalatestplus.play.guice._
-import play.api.Application
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsLookupResult, JsString}
 import play.api.test.Helpers._
 import play.api.test._
+import utils.KafkaPlaySpec
 
-class StatusControllerSpec extends PlaySpec with GuiceOneAppPerTest
-                                            with Injecting with BeforeAndAfterAll {
+class StatusControllerSpec extends KafkaPlaySpec {
 
-  var kafkaTestCluster:KafkaTestCluster = _
-
-  override def beforeAll() {
-    kafkaTestCluster = new KafkaTestCluster(1)
-    kafkaTestCluster.start
-
-  }
-
-  override def afterAll() {
-    kafkaTestCluster.stop
-  }
-
-  implicit override def newAppForTest(testData: TestData): Application = {
-    val serversList: String = kafkaTestCluster.getKafkaConnectString
-
-    val utils = new KafkaTestUtils(kafkaTestCluster)
-
-    new GuiceApplicationBuilder()
-      .configure(Map("bootstrap.servers" -> List(serversList)))
-      .overrides(bind[AdminClient].toInstance(utils.getAdminClient))
-      .build()
-  }
 
   "StatusController GET" should {
 
