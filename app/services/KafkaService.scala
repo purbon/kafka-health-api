@@ -49,28 +49,16 @@ class KafkaService  @Inject() (appConfig: Configuration,
   }
 
   def clusterConfig(): KafkaConfigDescription = {
-
-    val kafkaConfig: List[KafkaBrokerConfigDesc]= adminClientService
-      .clusterConfig()
-      .map {
-        case (brokerId, configList) => {
-          KafkaBrokerConfigDesc(
-            brokerId = brokerId,
-            config = configList
-              .map { entry =>
-                KafkaConfigEntry(name = entry.name(), value = entry.value())
-              }
-          )
-        }
-      }.toList
-
-    KafkaConfigDescription(kafkaConfig)
+    getClusterConfigValues()
   }
 
   def clusterProtocolVersions(): KafkaConfigDescription = {
+    getClusterConfigValues(filters = Some(List("log.message.format.version")))
+  }
 
+  private def getClusterConfigValues(configType: ConfigResource.Type = ConfigResource.Type.BROKER, filters : Option[List[String]] = None): KafkaConfigDescription = {
     val kafkaConfig: List[KafkaBrokerConfigDesc]= adminClientService
-      .clusterConfig(ConfigResource.Type.BROKER, Some(List("log.message.format.version")))
+      .clusterConfig(configType, filters)
       .map {
         case (brokerId, configList) => {
           KafkaBrokerConfigDesc(
