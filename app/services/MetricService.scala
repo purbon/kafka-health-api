@@ -10,7 +10,7 @@ class MetricService @Inject()(jmxClient: JMXClient) {
 
     val attrs = jmxClient.checkBean(metric)
 
-    attrs.size > 0 && attrs.head.value.asInstanceOf[Double] > 0
+    attrs.size > 0 && attrs.head.value.asInstanceOf[Long] > 0
   }
 
 }
