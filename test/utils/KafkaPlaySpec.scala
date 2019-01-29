@@ -29,14 +29,12 @@ abstract class KafkaPlaySpec extends PlaySpec
     kafkaTestCluster = new KafkaTestCluster(1)
     kafkaTestCluster.start
     kafkaTestUtils = new KafkaTestUtils(kafkaTestCluster)
-
   }
 
   override def beforeEach() =  {
   }
 
   override  def afterEach() = (
-
   )
 
   override def afterAll() {
@@ -52,7 +50,9 @@ abstract class KafkaPlaySpec extends PlaySpec
       utils.waitForBrokerToComeOnLine(broker.getBrokerId, 1, TimeUnit.MINUTES)
     }
 
-    adminClient = AdminClient.create(buildDefaultClientConfig(serversList))
+    if (adminClient == null) {
+      adminClient = AdminClient.create(buildDefaultClientConfig(serversList))
+    }
 
     new GuiceApplicationBuilder()
       .configure(Map("bootstrap.servers" -> List(serversList)))

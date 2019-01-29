@@ -17,7 +17,19 @@ class StatusControllerSpec extends KafkaPlaySpec {
       status(health) mustBe OK
 
       val color: JsLookupResult = contentAsJson(health) \ "status" \ "semaphore"
-      assert( color.get  == JsString("Green") )
+      assert(color.get == JsString("Green"))
+    }
+
+    "render the cluster guarantees" in {
+
+      val controller = inject[StatusController]
+      val guarantees = controller.clusterGuaranties().apply(FakeRequest(GET, "/cluster/guaranties"))
+
+      status(guarantees) mustBe OK
+
+      val producers = contentAsJson(guarantees) \ "producer"
+
+      assert( producers.get == JsString("JMX not reachable"))
     }
   }
 
