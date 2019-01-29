@@ -10,6 +10,8 @@ val workaround = {
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
+coverageEnabled := true
+
 scalaVersion := "2.12.6"
 libraryDependencies += "javax.ws.rs" % "javax.ws.rs-api" % "2.1" artifacts( Artifact("javax.ws.rs-api", "jar", "jar"))
 
@@ -32,6 +34,13 @@ javaOptions in Test += "-Dcom.sun.management.jmxremote.ssl=false"
 javaOptions in Test += "-Dcom.sun.management.jmxremote.authenticate=false"
 javaOptions in Test += "-Djava.rmi.server.hostname=0.0.0.0"
 
+
+test in Test := {
+  Def.sequential(
+    (test in Test),
+    (coverageReport in Test)
+  ).value
+}
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.example.controllers._"
